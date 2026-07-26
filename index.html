@@ -1684,21 +1684,18 @@
 
     /* ── Squircle corners where supported; plain radii elsewhere ── */
     @supports (corner-shape: squircle) {
-      .btn,
-      .portrait-card,
-      .featured-project,
-      .project-card,
-      .service-card,
-      .process-step,
-      .edu-card,
-      .contact-panel,
-      .flow-node,
-      .cert-actions a,
-      .mobile-nav-cta,
-      .theme-toggle,
-      .hamburger,
-      .marquee-toggle {
+      /* Applies only where a radius is already set, so this is safe to scope broadly */
+      *,
+      *::before,
+      *::after {
         corner-shape: squircle;
+      }
+
+      /* Small status indicators must stay true circles to read as dots */
+      .availability::before,
+      .status-dot,
+      .timeline-item::before {
+        corner-shape: round;
       }
 
       /* Squircles read tighter than a circular arc, so open the radii up */
