@@ -2370,8 +2370,8 @@
 
       /* ───────── WebGL plus-grid background ───────── */
       var PALETTES = {
-        light: { ink: [0.42, 0.40, 0.36], accent: [0.76, 0.25, 0.05], base: 0.15, glow: 0.32 },
-        dark: { ink: [0.72, 0.69, 0.62], accent: [0.91, 0.53, 0.35], base: 0.11, glow: 0.28 }
+        light: { ink: [0.42, 0.40, 0.36], accent: [0.76, 0.25, 0.05], base: 0.15, glow: 0.42 },
+        dark: { ink: [0.72, 0.69, 0.62], accent: [1.0, 0.64, 0.42], base: 0.13, glow: 1.0 }
       };
 
       (function initShader() {
@@ -2427,14 +2427,14 @@
           "  if (mask < 0.01) { discard; }",
           "",
           "  float d = distance(gl_FragCoord.xy, u_mouse);",
-          "  float glow = 1.0 - smoothstep(0.0, 230.0 * u_dpr, d);",
-          "  glow = glow * glow;",
+          "  float glow = 1.0 - smoothstep(0.0, 270.0 * u_dpr, d);",
+          "  glow = glow * glow * (1.6 - 0.6 * glow);",
           "  glow *= (1.0 - u_static);",
           "",
           "  float shimmer = mix(1.0, 0.78 + 0.22 * sin(u_time * 0.5 + h1 * 6.2831), 1.0 - u_static);",
           "",
           "  float alpha = mask * (u_base * shimmer + glow * u_glowmax);",
-          "  vec3 col = mix(u_ink, u_accent, glow * 0.6);",
+          "  vec3 col = mix(u_ink, u_accent, min(1.0, glow * 1.15));",
           "  gl_FragColor = vec4(col, alpha);",
           "}"
         ].join("\n");
