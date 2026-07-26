@@ -1682,6 +1682,66 @@
 
     }
 
+    /* ── Squircle corners where supported; plain radii elsewhere ── */
+    @supports (corner-shape: squircle) {
+      .btn,
+      .portrait-card,
+      .featured-project,
+      .project-card,
+      .service-card,
+      .process-step,
+      .edu-card,
+      .contact-panel,
+      .flow-node,
+      .cert-actions a,
+      .mobile-nav-cta,
+      .theme-toggle,
+      .hamburger,
+      .marquee-toggle {
+        corner-shape: squircle;
+      }
+
+      /* Squircles read tighter than a circular arc, so open the radii up */
+      .btn {
+        border-radius: 14px;
+      }
+
+      .btn.small,
+      .cert-actions a,
+      .flow-node {
+        border-radius: 12px;
+      }
+
+      .theme-toggle,
+      .hamburger,
+      .marquee-toggle {
+        border-radius: 30%;
+      }
+
+      .process-step,
+      .edu-card {
+        border-radius: 19px;
+      }
+
+      .featured-project,
+      .project-card,
+      .service-card {
+        border-radius: 22px;
+      }
+
+      .portrait-card {
+        border-radius: 26px;
+      }
+
+      .mobile-nav-cta {
+        border-radius: 17px;
+      }
+
+      .contact-panel {
+        border-radius: 30px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
