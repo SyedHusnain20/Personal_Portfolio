@@ -572,6 +572,15 @@
       box-shadow: var(--portrait-shadow);
     }
 
+    /* Wrapper is transparent on desktop so the image still fills the card */
+    .avatar-ring {
+      display: contents;
+    }
+
+    .avatar-ribbon {
+      display: none;
+    }
+
     .portrait-card img {
       width: 100%;
       height: 106%;
@@ -1719,32 +1728,74 @@
         color: var(--muted);
       }
 
+      /* LinkedIn-style profile card: ringed avatar with a curved ribbon */
       .portrait-card {
         order: 1;
-        display: grid;
-        grid-template-columns: 72px minmax(0, 1fr);
-        grid-template-rows: auto auto;
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 5px 14px;
+        text-align: center;
+        gap: 12px;
         max-width: 100%;
         max-height: none;
         min-height: 0;
         aspect-ratio: auto;
-        margin-bottom: 24px;
-        padding: 14px;
+        margin-bottom: 26px;
+        padding: 24px 20px 22px;
         border: 1px solid var(--line);
-        border-radius: 20px;
+        border-radius: 22px;
         background: var(--surface);
         box-shadow: none;
+        overflow: visible;
+      }
+
+      .avatar-ring {
+        display: block;
+        position: relative;
+        width: 136px;
+        height: 136px;
+        flex: 0 0 auto;
       }
 
       .portrait-card img {
-        grid-column: 1;
-        grid-row: 1 / 3;
-        width: 72px;
-        height: 72px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 68%;
+        height: 68%;
         border-radius: 50%;
-        object-position: 50% 8%;
+        object-position: 50% 12%;
+      }
+
+      .avatar-ribbon {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .avatar-ribbon .ring {
+        fill: none;
+        stroke: var(--line-strong);
+        stroke-width: 2.5;
+      }
+
+      .avatar-ribbon .band {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 15;
+      }
+
+      .avatar-ribbon .band-text {
+        fill: var(--accent-contrast);
+        font-family: var(--font-mono);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 1.15px;
+        dominant-baseline: central;
       }
 
       .portrait-card::after {
@@ -1753,32 +1804,29 @@
 
       .portrait-caption {
         position: static;
-        grid-column: 2;
-        grid-row: 1;
+        order: 2;
         color: var(--ink);
       }
 
       .portrait-caption strong {
-        font-size: 1.05rem;
+        font-size: 1.22rem;
       }
 
       .portrait-caption span {
-        margin-top: 2px;
+        margin-top: 3px;
         color: var(--muted);
-        font-size: 0.73rem;
-        line-height: 1.4;
+        font-size: 0.76rem;
+        line-height: 1.45;
       }
 
       .portrait-badge {
         position: static;
-        grid-column: 2;
-        grid-row: 2;
-        justify-self: start;
-        padding: 4px 11px;
+        order: 3;
+        padding: 5px 12px;
         border: 1px solid var(--line-strong);
         background: var(--accent-soft);
         color: var(--accent);
-        font-size: 0.61rem;
+        font-size: 0.62rem;
       }
 
       /* Pipeline diagram wraps instead of overflowing */
@@ -1851,10 +1899,11 @@
         corner-shape: squircle;
       }
 
-      /* Small status indicators must stay true circles to read as dots */
+      /* Circles that must stay circular: status dots and the mobile avatar */
       .availability::before,
       .status-dot,
-      .timeline-item::before {
+      .timeline-item::before,
+      .portrait-card img {
         corner-shape: round;
       }
 
@@ -2014,7 +2063,19 @@
       </div>
 
       <div class="portrait-card">
-        <img src="assets/hasnain-portrait.png" alt="Portrait of Hasnain Zainulabdin" id="portraitImg" />
+        <div class="avatar-ring">
+          <img src="assets/hasnain-portrait.png" alt="Portrait of Hasnain Zainulabdin" id="portraitImg" />
+          <svg class="avatar-ribbon" viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <path id="ribbonArc" d="M18.06 87.23 A50 50 0 0 0 101.94 87.23" />
+            </defs>
+            <circle class="ring" cx="60" cy="60" r="50" />
+            <path class="band" d="M18.06 87.23 A50 50 0 0 0 101.94 87.23" />
+            <text class="band-text">
+              <textPath href="#ribbonArc" startOffset="50%" text-anchor="middle">OPEN TO WORK</textPath>
+            </text>
+          </svg>
+        </div>
         <span class="portrait-badge">10+ PROJECTS SHIPPED</span>
         <div class="portrait-caption">
           <strong>Hasnain Zainulabdin</strong>
