@@ -66,6 +66,8 @@
       --accent: #c2410c;
       --accent-hover: #9a3412;
       --accent-soft: #f8e9df;
+      --accent-contrast: #ffffff;
+      --accent-glow: rgba(194, 65, 12, 0.28);
       --green: #1f8a4c;
       --card-shadow: 0 16px 40px rgba(25, 23, 19, 0.07);
       --portrait-shadow: 0 24px 60px rgba(25, 23, 19, 0.18);
@@ -97,6 +99,8 @@
       --accent: #e8875a;
       --accent-hover: #f09a6e;
       --accent-soft: rgba(232, 135, 90, 0.14);
+      --accent-contrast: #191713;
+      --accent-glow: rgba(232, 135, 90, 0.25);
       --green: #3ecf77;
       --card-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
       --portrait-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
@@ -136,7 +140,7 @@
 
     ::selection {
       background: var(--accent);
-      color: #fff;
+      color: var(--accent-contrast);
     }
 
     img,
@@ -379,12 +383,12 @@
 
     .btn.primary {
       background: var(--accent);
-      color: #ffffff;
+      color: var(--accent-contrast);
     }
 
     .btn.primary:hover {
       background: var(--accent-hover);
-      box-shadow: 0 8px 24px rgba(194, 65, 12, 0.28);
+      box-shadow: 0 8px 24px var(--accent-glow);
     }
 
     .btn.outline {
@@ -620,12 +624,59 @@
 
     /* ── Marquee ── */
     .marquee {
-      overflow: hidden;
+      position: relative;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       padding: 15px 0;
+    }
+
+    .marquee-mask {
+      overflow: hidden;
       -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
       mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .marquee-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--ink-2);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .marquee-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .marquee-toggle svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .marquee-toggle .icon-play {
+      display: none;
+    }
+
+    .marquee.paused .icon-play {
+      display: block;
+    }
+
+    .marquee.paused .icon-pause {
+      display: none;
+    }
+
+    .marquee.paused .marquee-track {
+      animation-play-state: paused;
     }
 
     .marquee-track {
@@ -1316,6 +1367,11 @@
       border-color: var(--panel-accent);
     }
 
+    .contact-panel a:focus-visible,
+    .contact-panel button:focus-visible {
+      outline-color: var(--panel-accent);
+    }
+
     .contact-actions {
       display: flex;
       justify-content: center;
@@ -1519,7 +1575,7 @@
       font-size: 1rem !important;
       padding: 16px 34px !important;
       background: var(--accent);
-      color: #fff !important;
+      color: var(--accent-contrast) !important;
       border-radius: 12px;
     }
 
@@ -1670,7 +1726,8 @@
           </svg>
         </button>
         <a class="btn primary small magnetic" href="#contact">Start a project</a>
-        <button class="hamburger" id="menuBtn" aria-label="Open navigation menu" aria-expanded="false">
+        <button class="hamburger" id="menuBtn" aria-label="Navigation menu" aria-expanded="false"
+          aria-controls="mobileNav">
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -1746,15 +1803,25 @@
     </section>
 
     <!-- ── Skills marquee ── -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track">
-        <div class="marquee-group">
-          <span>RAG Pipelines</span><span>LLM Apps</span><span>Voice AI</span><span>FastAPI Backends</span><span>Vector Search</span><span>NLP</span><span>WhatsApp Bots</span><span>Docker Deploys</span><span>Prompt Engineering</span>
-        </div>
-        <div class="marquee-group">
-          <span>RAG Pipelines</span><span>LLM Apps</span><span>Voice AI</span><span>FastAPI Backends</span><span>Vector Search</span><span>NLP</span><span>WhatsApp Bots</span><span>Docker Deploys</span><span>Prompt Engineering</span>
+    <div class="marquee">
+      <div class="marquee-mask" aria-hidden="true">
+        <div class="marquee-track">
+          <div class="marquee-group">
+            <span>RAG Pipelines</span><span>LLM Apps</span><span>Voice AI</span><span>FastAPI Backends</span><span>Vector Search</span><span>NLP</span><span>WhatsApp Bots</span><span>Docker Deploys</span><span>Prompt Engineering</span>
+          </div>
+          <div class="marquee-group">
+            <span>RAG Pipelines</span><span>LLM Apps</span><span>Voice AI</span><span>FastAPI Backends</span><span>Vector Search</span><span>NLP</span><span>WhatsApp Bots</span><span>Docker Deploys</span><span>Prompt Engineering</span>
+          </div>
         </div>
       </div>
+      <button class="marquee-toggle" type="button" aria-label="Pause skills ticker" aria-pressed="false">
+        <svg class="icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+          <path d="M10 5v14M14 5v14" stroke-linecap="round" />
+        </svg>
+        <svg class="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M8 5l11 7-11 7z" stroke-linejoin="round" />
+        </svg>
+      </button>
     </div>
 
     <!-- ── Manifesto ── -->
@@ -2196,6 +2263,7 @@
         });
       });
       toggles.forEach(function (b) { b.setAttribute("aria-pressed", String(currentTheme() === "dark")); });
+      if (metaTheme) metaTheme.setAttribute("content", currentTheme() === "dark" ? "#131210" : "#faf7f1");
 
       /* ───────── Header scrolled state ───────── */
       var header = document.getElementById("siteHeader");
@@ -2230,19 +2298,43 @@
       /* ───────── Mobile menu ───────── */
       var menuBtn = document.getElementById("menuBtn");
       var mobileNav = document.getElementById("mobileNav");
+      var pageRegions = [document.getElementById("main"), document.querySelector("footer")];
+
+      function setBackgroundInert(inert) {
+        pageRegions.forEach(function (el) {
+          if (!el) return;
+          if (inert) {
+            el.setAttribute("aria-hidden", "true");
+            if ("inert" in el) el.inert = true;
+          } else {
+            el.removeAttribute("aria-hidden");
+            if ("inert" in el) el.inert = false;
+          }
+        });
+      }
+
+      function openMenu() {
+        mobileNav.classList.add("open");
+        menuBtn.classList.add("open");
+        menuBtn.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+        setBackgroundInert(true);
+        var first = mobileNav.querySelector(".mobile-nav-link");
+        if (first) first.focus();
+      }
 
       function closeMenu() {
         mobileNav.classList.remove("open");
         menuBtn.classList.remove("open");
         menuBtn.setAttribute("aria-expanded", "false");
         document.body.style.overflow = "";
+        setBackgroundInert(false);
+        menuBtn.focus();
       }
 
       menuBtn.addEventListener("click", function () {
-        var isOpen = mobileNav.classList.toggle("open");
-        menuBtn.classList.toggle("open", isOpen);
-        menuBtn.setAttribute("aria-expanded", String(isOpen));
-        document.body.style.overflow = isOpen ? "hidden" : "";
+        if (mobileNav.classList.contains("open")) closeMenu();
+        else openMenu();
       });
 
       mobileNav.querySelectorAll(".mobile-nav-link").forEach(function (link) {
@@ -2252,9 +2344,29 @@
       document.addEventListener("keydown", function (e) {
         if (e.key === "Escape" && mobileNav.classList.contains("open")) {
           closeMenu();
-          menuBtn.focus();
         }
       });
+
+      document.addEventListener("focusin", function (e) {
+        if (!mobileNav.classList.contains("open")) return;
+        var inBackground = pageRegions.some(function (el) { return el && el.contains(e.target); });
+        if (inBackground) {
+          var first = mobileNav.querySelector(".mobile-nav-link");
+          if (first) first.focus();
+        }
+      });
+
+      /* ───────── Marquee pause/play ───────── */
+      var marqueeEl = document.querySelector(".marquee");
+      var marqueeToggle = document.querySelector(".marquee-toggle");
+      if (marqueeEl && marqueeToggle) {
+        marqueeToggle.addEventListener("click", function () {
+          var paused = marqueeEl.classList.toggle("paused");
+          marqueeToggle.setAttribute("aria-pressed", String(paused));
+          marqueeToggle.setAttribute("aria-label", paused ? "Play skills ticker" : "Pause skills ticker");
+          if (window.__marqueeTween) window.__marqueeTween.paused(paused);
+        });
+      }
 
       /* ───────── WebGL plus-grid background ───────── */
       var PALETTES = {
@@ -2519,12 +2631,12 @@
             }
           });
           var words = line.querySelectorAll(".w");
-          gsap.set(words, { opacity: 0.12 });
+          gsap.set(words, { opacity: 0.5 });
           gsap.to(words, {
             opacity: 1,
             stagger: 0.05,
             ease: "none",
-            scrollTrigger: { trigger: line, start: "top 82%", end: "top 38%", scrub: 0.6 }
+            scrollTrigger: { trigger: line, start: "top 88%", end: "top 52%", scrub: 0.6 }
           });
         });
 
@@ -2580,6 +2692,7 @@
         if (track) {
           track.classList.add("gsap-run");
           var marqueeTween = gsap.to(track, { xPercent: -50, ease: "none", duration: 42, repeat: -1 });
+          window.__marqueeTween = marqueeTween;
           ScrollTrigger.create({
             onUpdate: function (self) {
               var boost = gsap.utils.clamp(1, 4, 1 + Math.abs(self.getVelocity()) / 900);
