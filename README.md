@@ -44,11 +44,11 @@ Certificates/   — Folder for certification PDFs and badge images (add your own
 
 ## Contact
 
-- Email: hasnainzainulabdin@gmail.com
-- LinkedIn: linkedin.com/in/husnain-sayyed-65a33638b
-- GitHub: github.com/SyedHusnain20
-- WhatsApp: +92 312 6641281
-- Instagram: @syedhasnain40
+**Engr. Hasnain Zainulabdin**
+R&R Digital Solutions
+
+Contact: 03126641281 | [HasnainZainulabdin@gmail.com](mailto:HasnainZainulabdin@gmail.com)
+Website: https://hasnainzainulabdin.vercel.app/
 
 ---
 Built with intention.
