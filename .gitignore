@@ -1,2 +1,12 @@
-.claude/
-.DS_Store
+node_modules/
+.next/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dev.db
+.env
+.env.local
+.vercel/
+next-env.d.ts
+*.tsbuildinfo

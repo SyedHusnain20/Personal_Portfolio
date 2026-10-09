@@ -1,0 +1,142 @@
+{
+  "projects": [
+    {
+      "slug": "shariahease",
+      "title": "ShariahEase",
+      "category": "Islamic Finance",
+      "description": "An Islamic-finance AI chatbot that answers on WhatsApp, voice in and voice out. Explainable RAG under the hood: vetted sources, cited answers, fast inference. Accuracy first, always.",
+      "tags": ["Python", "FastAPI", "Llama 3", "FAISS", "WhatsApp API", "Whisper"],
+      "live_url": "https://sayyedhasnain-shariahease.hf.space",
+      "github_url": null,
+      "image_url": null,
+      "flow_steps": ["Data Input", "Vector Search", "LLM Answer", "Cited Output"],
+      "flow_caption": "Explainable RAG pipeline",
+      "is_featured": true,
+      "is_published": true
+    },
+    {
+      "slug": "qanoondaan",
+      "title": "QanoonDaan",
+      "category": "Legal AI",
+      "description": "Ask about Pakistani law in plain language. A legal AI assistant grounded in statutes and precedent, built for quick, reliable references through a conversational interface.",
+      "tags": ["RAG", "FAISS", "FastAPI", "Llama 3"],
+      "live_url": "https://huggingface.co/spaces/SayyedHasnain/QanoonDaan",
+      "github_url": null,
+      "image_url": null,
+      "flow_steps": null,
+      "flow_caption": null,
+      "is_featured": false,
+      "is_published": true
+    },
+    {
+      "slug": "chicken-khata",
+      "title": "Chicken Khata",
+      "category": "Business Tool",
+      "description": "A smart ledger and inventory management system for poultry businesses. Tracks daily sales, expenses, stock levels, and generates financial reports with clean data visualization.",
+      "tags": ["Python", "FastAPI", "PostgreSQL", "Streamlit"],
+      "live_url": null,
+      "github_url": null,
+      "image_url": null,
+      "flow_steps": null,
+      "flow_caption": null,
+      "is_featured": false,
+      "is_published": true
+    },
+    {
+      "slug": "feetrack",
+      "title": "FeeTrack",
+      "category": "Education Tech",
+      "description": "An automated fee tracking and management system for educational institutions. Handles student records, payment schedules, receipt generation, and overdue notifications in one dashboard.",
+      "tags": ["Python", "FastAPI", "SQLite", "Jinja2"],
+      "live_url": null,
+      "github_url": null,
+      "image_url": null,
+      "flow_steps": null,
+      "flow_caption": null,
+      "is_featured": false,
+      "is_published": true
+    },
+    {
+      "slug": "resufit",
+      "title": "ResuFit",
+      "category": "Recruiting AI",
+      "description": "An AI resume-screening tool that ranks a stack of resumes against any job description with semantic matching. Skill relevance, not keyword bingo. Built for recruiters who screen at volume.",
+      "tags": ["spaCy", "scikit-learn", "Docker", "HF Spaces"],
+      "live_url": "https://huggingface.co/spaces/Sayyed-Hasnain/ResuFit",
+      "github_url": null,
+      "image_url": null,
+      "flow_steps": null,
+      "flow_caption": null,
+      "is_featured": false,
+      "is_published": true
+    }
+  ],
+  "certificates": [
+    {
+      "title": "Python Essentials 1",
+      "issuer": "Cisco Networking Academy",
+      "credly_url": "https://www.credly.com/badges/106cd6eb-317d-4736-8d5a-8b0007fce242/public_url",
+      "pdf_url": "/Certificates/PythonEssentials1.pdf",
+      "issued_on": null,
+      "is_published": true
+    },
+    {
+      "title": "Python Essentials 2",
+      "issuer": "Cisco Networking Academy",
+      "credly_url": "https://www.credly.com/badges/60e4a982-4a95-408a-841d-3924afa1f0ee/public_url",
+      "pdf_url": "/Certificates/PythonEssentials2.pdf",
+      "issued_on": null,
+      "is_published": true
+    },
+    {
+      "title": "Data Science Essentials with Python",
+      "issuer": "Cisco Networking Academy",
+      "credly_url": "https://www.credly.com/badges/d9735ed3-7bd9-4a9b-b97f-852b594df720/public_url",
+      "pdf_url": "/Certificates/Data_Science_Essentials.pdf",
+      "issued_on": null,
+      "is_published": true
+    },
+    {
+      "title": "Introduction to Modern AI",
+      "issuer": "Cisco Networking Academy",
+      "credly_url": "https://www.credly.com/badges/1f6f1bd7-9ed8-4317-bb30-30ac76b14919/public_url",
+      "pdf_url": "/Certificates/IntrotoModernAI.pdf",
+      "issued_on": null,
+      "is_published": true
+    }
+  ],
+  "experience": [
+    {
+      "kind": "experience",
+      "title": "AI & Backend Engineer",
+      "organization": "Independent AI Consulting / Freelance",
+      "period": "2025 – Present",
+      "description": "AI systems for real clients: LLMs wired into their existing workflows, backends tuned until they behave.",
+      "is_published": true
+    },
+    {
+      "kind": "experience",
+      "title": "Python Developer",
+      "organization": "Local Freelance · Hyderabad, Sindh",
+      "period": "2023 – Present",
+      "description": "Specialized Python projects for various local clients.",
+      "is_published": true
+    },
+    {
+      "kind": "education",
+      "title": "BS in Software Engineering",
+      "organization": "University of Sindh",
+      "period": null,
+      "description": "Software architecture, algorithms, data systems, and full-stack development.",
+      "is_published": true
+    },
+    {
+      "kind": "education",
+      "title": "AI & Data Science Specialization",
+      "organization": "Saylani Mass IT Training (SMIT)",
+      "period": null,
+      "description": "Hands-on training in machine learning, deep learning, NLP, and modern AI techniques.",
+      "is_published": true
+    }
+  ]
+}
