@@ -20,6 +20,11 @@ LOGIN_WINDOW = 15 * 60  # per 15 minutes, per IP
 
 @router.post("/login")
 def login(payload: LoginIn, request: Request, response: Response, db: Session = Depends(get_db)):
+    if settings.jwt_problem:
+        raise HTTPException(
+            status_code=503,
+            detail="Login is disabled: the server's JWT_SECRET is missing or too short (needs 32+ characters).",
+        )
     ip = client_ip(request)
     ratelimit.enforce(db, "login", ip, limit=LOGIN_LIMIT, window_seconds=LOGIN_WINDOW)
 

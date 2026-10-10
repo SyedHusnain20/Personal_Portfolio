@@ -32,7 +32,8 @@ async def same_origin_for_writes(request: Request, call_next):
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    # auth_problem is "missing" or "too_short" when JWT_SECRET is unusable (never the secret itself).
+    return {"status": "ok", "auth_problem": settings.jwt_problem}
 
 
 @app.post("/api/admin/revalidate", tags=["admin"], dependencies=[Depends(get_current_admin)])

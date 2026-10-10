@@ -44,6 +44,8 @@ def create_token(user_id: int) -> str:
 
 
 def decode_token(token: str) -> int | None:
+    if settings.jwt_problem:
+        return None
     try:
         payload = jwt.decode(token, settings.jwt_secret, algorithms=[_ALGORITHM])
         return int(payload["sub"])
