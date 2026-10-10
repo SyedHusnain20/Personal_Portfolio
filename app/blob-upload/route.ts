@@ -14,7 +14,10 @@ export async function POST(request: Request) {
       body,
       request,
       onBeforeGenerateToken: async () => {
-        if (!(await adminEmail(request.headers.get("cookie")))) {
+        if (!(await adminEmail(
+            request.headers.get("cookie"),
+            request.headers.get("x-forwarded-host") ?? request.headers.get("host"),
+          ))) {
           throw new Error("Not authenticated");
         }
         return {

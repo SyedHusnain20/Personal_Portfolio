@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AdminNav from "@/components/admin/AdminNav";
 import { adminEmail } from "@/lib/admin-auth";
@@ -7,7 +7,8 @@ import { adminEmail } from "@/lib/admin-auth";
 // The cookie is checked against the API on every request, so a sign-out or expiry takes effect at once.
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const jar = await cookies();
-  const email = await adminEmail(jar.toString());
+  const h = await headers();
+  const email = await adminEmail(jar.toString(), h.get("x-forwarded-host") ?? h.get("host"));
   if (!email) redirect("/admin/login");
 
   return (
