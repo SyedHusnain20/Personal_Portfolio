@@ -215,11 +215,21 @@
       font-size: 1.12rem;
       letter-spacing: -0.01em;
       white-space: nowrap;
+      transition: transform 300ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .brand:hover {
+      transform: scale(1.05);
     }
 
     .brand em {
       color: var(--accent);
       font-style: italic;
+      transition: color 200ms ease;
+    }
+
+    .brand:hover em {
+      color: var(--accent-hover);
     }
 
     .nav-links {
@@ -234,7 +244,7 @@
     .nav-links a {
       position: relative;
       padding: 5px 1px;
-      transition: color 160ms ease;
+      transition: color 200ms cubic-bezier(.4,0,.2,1), transform 200ms cubic-bezier(.4,0,.2,1);
     }
 
     .nav-links a::after {
@@ -247,12 +257,16 @@
       background: var(--accent);
       transform: scaleX(0);
       transform-origin: left center;
-      transition: transform 220ms ease;
+      transition: transform 280ms cubic-bezier(.4,0,.2,1);
     }
 
     .nav-links a:hover,
     .nav-links a.active {
       color: var(--ink);
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-1px);
     }
 
     .nav-links a:hover::after,
@@ -277,12 +291,19 @@
       background: var(--surface);
       color: var(--ink);
       cursor: pointer;
-      transition: border-color 160ms ease, background 320ms ease;
+      transition: border-color 200ms ease, background 320ms ease, transform 300ms cubic-bezier(.34,1.56,.64,1), box-shadow 200ms ease;
       flex-shrink: 0;
     }
 
     .theme-toggle:hover {
       border-color: var(--accent);
+      transform: rotate(15deg) scale(1.08);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+
+    .theme-toggle:active {
+      transform: rotate(-15deg) scale(0.92);
+      transition-duration: 100ms;
     }
 
     .theme-toggle svg {
@@ -322,8 +343,31 @@
       line-height: 1;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+      transition: background 200ms cubic-bezier(.4,0,.2,1), border-color 200ms ease, color 200ms ease, box-shadow 200ms ease, transform 200ms cubic-bezier(.4,0,.2,1);
       will-change: transform;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Click / press animation for all buttons */
+    .btn:active {
+      transform: scale(0.95);
+      transition-duration: 80ms;
+    }
+
+    /* Ripple shimmer on hover */
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+      transform: translateX(-120%);
+      transition: transform 500ms ease;
+      pointer-events: none;
+    }
+
+    .btn:hover::after {
+      transform: translateX(120%);
     }
 
     .btn.primary {
@@ -333,7 +377,8 @@
 
     .btn.primary:hover {
       background: var(--accent-hover);
-      box-shadow: 0 8px 24px var(--accent-glow);
+      box-shadow: 0 8px 28px var(--accent-glow), 0 0 0 1px var(--accent-glow);
+      transform: translateY(-2px);
     }
 
     .btn.outline {
@@ -344,6 +389,8 @@
 
     .btn.outline:hover {
       border-color: var(--ink);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
 
     .btn.small {
@@ -383,8 +430,8 @@
       display: grid;
       grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
       gap: clamp(40px, 6vw, 80px);
-      align-items: center;
-      padding: clamp(56px, 8vw, 100px) 0 clamp(48px, 6vw, 76px);
+      align-items: start;
+      padding: clamp(20px, 3vw, 36px) 0 clamp(48px, 6vw, 76px);
     }
 
     .availability {
@@ -419,7 +466,7 @@
     }
 
     .hero h1 {
-      margin-top: 26px;
+      margin-top: 0;
       font-family: var(--font-display);
       font-weight: 600;
       font-size: clamp(2.6rem, 5.8vw, 4.7rem);
@@ -526,6 +573,12 @@
       overflow: hidden;
       background: #191713;
       box-shadow: var(--portrait-shadow);
+      transition: transform 500ms cubic-bezier(.4,0,.2,1), box-shadow 500ms ease;
+    }
+
+    .portrait-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 32px 70px rgba(25, 23, 19, 0.25);
     }
 
     /* Wrapper is transparent on desktop so the image still fills the card */
@@ -590,6 +643,12 @@
       font-size: 0.7rem;
       font-weight: 600;
       letter-spacing: 0.03em;
+      transition: transform 300ms cubic-bezier(.34,1.56,.64,1), box-shadow 300ms ease;
+    }
+
+    .portrait-card:hover .portrait-badge {
+      transform: scale(1.06);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
 
     /* ── Marquee ── */
@@ -780,6 +839,13 @@
       border-radius: 16px;
       overflow: hidden;
       background: var(--surface);
+      transition: border-color 300ms ease, box-shadow 400ms ease, transform 400ms cubic-bezier(.4,0,.2,1);
+    }
+
+    .featured-project:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(25, 23, 19, 0.14), 0 0 0 1px var(--accent-glow);
     }
 
     .featured-copy {
@@ -833,6 +899,14 @@
       font-family: var(--font-mono);
       font-size: 0.67rem;
       font-weight: 500;
+      transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms cubic-bezier(.4,0,.2,1);
+    }
+
+    .tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+      transform: translateY(-1px);
     }
 
     .project-cta {
@@ -913,13 +987,13 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       background: var(--surface);
-      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      transition: border-color 280ms cubic-bezier(.4,0,.2,1), transform 350ms cubic-bezier(.4,0,.2,1), box-shadow 350ms ease;
     }
 
     .project-card:hover {
-      border-color: var(--line-strong);
-      transform: translateY(-3px);
-      box-shadow: var(--card-shadow);
+      border-color: var(--accent);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(25, 23, 19, 0.12), 0 0 0 1px var(--accent-glow);
     }
 
     /* ── Services ── */
@@ -934,13 +1008,13 @@
       border: 1px solid var(--line);
       border-radius: 16px;
       background: var(--surface);
-      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+      transition: border-color 280ms cubic-bezier(.4,0,.2,1), transform 350ms cubic-bezier(.4,0,.2,1), box-shadow 350ms ease, background 300ms ease;
     }
 
     .service-card:hover {
-      border-color: var(--line-strong);
-      transform: translateY(-3px);
-      box-shadow: var(--card-shadow);
+      border-color: var(--accent);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px rgba(25, 23, 19, 0.12), 0 0 0 1px var(--accent-glow);
     }
 
     .service-num {
@@ -1034,6 +1108,13 @@
       border: 1px solid var(--line);
       border-radius: 14px;
       background: var(--surface);
+      transition: border-color 250ms ease, transform 300ms cubic-bezier(.4,0,.2,1), box-shadow 300ms ease;
+    }
+
+    .process-step:hover {
+      border-color: var(--accent);
+      transform: translateX(6px);
+      box-shadow: -4px 4px 20px var(--accent-glow);
     }
 
     .step-num {
@@ -1047,6 +1128,13 @@
       font-family: var(--font-display);
       font-size: 1.1rem;
       font-weight: 600;
+      transition: background 250ms ease, color 250ms ease, transform 350ms cubic-bezier(.34,1.56,.64,1);
+    }
+
+    .process-step:hover .step-num {
+      background: var(--accent);
+      color: var(--accent-contrast);
+      transform: scale(1.1) rotate(-5deg);
     }
 
     .process-step h3 {
@@ -1150,6 +1238,13 @@
       border: 1px solid var(--line);
       border-radius: 14px;
       background: var(--surface);
+      transition: border-color 250ms ease, transform 300ms cubic-bezier(.4,0,.2,1), box-shadow 300ms ease;
+    }
+
+    .edu-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
     }
 
     /* ── Certifications ── */
@@ -1194,7 +1289,7 @@
       align-items: center;
       padding: 20px 14px 20px 10px;
       border-bottom: 1px solid var(--line);
-      transition: background 200ms ease;
+      transition: background 200ms ease, padding-left 280ms cubic-bezier(.4,0,.2,1);
     }
 
     .cert-row::before {
@@ -1207,11 +1302,12 @@
       background: var(--accent);
       transform: scaleY(0);
       transform-origin: top center;
-      transition: transform 220ms ease;
+      transition: transform 300ms cubic-bezier(.4,0,.2,1);
     }
 
     .cert-row:hover {
       background: var(--surface);
+      padding-left: 18px;
     }
 
     .cert-row:hover::before {
@@ -1263,12 +1359,18 @@
       color: var(--ink-2);
       font-size: 0.75rem;
       font-weight: 600;
-      transition: border-color 160ms ease, color 160ms ease, background 160ms ease;
+      transition: border-color 200ms ease, color 200ms ease, background 200ms ease, transform 200ms cubic-bezier(.4,0,.2,1), box-shadow 200ms ease;
     }
 
     .cert-actions a:hover {
       border-color: var(--accent);
       color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .cert-actions a:active {
+      transform: scale(0.94);
+      transition-duration: 80ms;
     }
 
     .cert-actions a:first-child {
@@ -1278,6 +1380,7 @@
 
     .cert-actions a:first-child:hover {
       background: var(--accent-soft);
+      box-shadow: 0 4px 16px var(--accent-glow);
     }
 
     /* ── Contact ── */
@@ -1426,11 +1529,12 @@
       color: var(--ink-2);
       font-size: 0.9rem;
       font-weight: 500;
-      transition: color 160ms ease;
+      transition: color 200ms ease, transform 200ms cubic-bezier(.4,0,.2,1);
     }
 
     .footer-col a:hover {
       color: var(--accent);
+      transform: translateX(4px);
     }
 
     .footer-email {
@@ -1563,7 +1667,7 @@
       .hero {
         grid-template-columns: minmax(0, 1fr);
         gap: 40px;
-        padding-top: 44px;
+        padding-top: 20px;
       }
 
       .portrait-card {
@@ -1616,7 +1720,7 @@
         display: flex;
         flex-direction: column;
         gap: 0;
-        padding-top: 26px;
+        padding-top: 14px;
       }
 
       .hero-left {

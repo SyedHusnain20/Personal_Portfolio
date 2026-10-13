@@ -265,10 +265,9 @@ export default function Effects() {
           /* Hero entrance */
           gsap
             .timeline({ defaults: { ease: "power3.out" } })
-            .from(".availability", { y: 14, opacity: 0, duration: 0.6 })
-            .from("#hero-title", { y: 30, opacity: 0, duration: 0.9 }, "-=0.3")
+            .from("#hero-title", { y: 30, opacity: 0, duration: 0.9 })
             .from(".hero-sub", { y: 20, opacity: 0, duration: 0.7 }, "-=0.55")
-            .from(".hero-actions", { y: 16, opacity: 0, duration: 0.6 }, "-=0.45")
+            .from(".hero-actions .btn", { y: 16, opacity: 0, stagger: 0.1, duration: 0.6 }, "-=0.4")
             .from(".hero-email", { opacity: 0, duration: 0.5 }, "-=0.35")
             .from(".hero-proof > *", { y: 14, opacity: 0, stagger: 0.08, duration: 0.5 }, "-=0.3")
             .from(".portrait-card", { y: 28, opacity: 0, scale: 0.97, duration: 1 }, 0.15)

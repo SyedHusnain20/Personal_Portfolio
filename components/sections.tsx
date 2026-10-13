@@ -34,7 +34,6 @@ export function Hero({ liveCount, certCount }: { liveCount: number; certCount: n
     <section className="shell hero" aria-labelledby="hero-title">
       <link rel="preload" as="image" href={SITE.portrait} fetchPriority="high" />
       <div className="hero-left">
-        <p className="availability">Available for new projects</p>
         <h1 id="hero-title">
           <span className="h1-role">
             Hasnain Zainulabdin &middot; AI Developer &amp; Software Engineer in Hyderabad, Sindh
@@ -222,13 +221,13 @@ function FlowLabel({ label }: { label: string }) {
   );
 }
 
-function ProjectLinks({ project, primary }: { project: Project; primary: boolean }) {
+function ProjectLinks({ project }: { project: Project; primary?: boolean }) {
   if (!project.live_url && !project.github_url) return null;
   return (
     <div className="project-cta" style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
       {project.live_url && (
         <a
-          className={`btn ${primary ? "primary" : "outline"} small`}
+          className="btn primary small"
           href={project.live_url}
           target="_blank"
           rel="noreferrer"

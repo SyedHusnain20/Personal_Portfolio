@@ -183,7 +183,7 @@ export default function NainiChat() {
             </svg>
           </button>
         </form>
-        <div className="naini-powered">POWERED BY GROQ · NAINI v1.0</div>
+        <div className="naini-powered">POWERED BY HASNAIN · NAINI v1.0</div>
       </div>
     </>
   );
