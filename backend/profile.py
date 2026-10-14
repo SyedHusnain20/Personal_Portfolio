@@ -40,6 +40,7 @@ SERVICES = (
     "Custom chatbots (RAG assistants that answer with sources; web, WhatsApp and voice bots)",
     "AI automation",
     "AI integration into existing tools, CRMs and pipelines",
+    "Data analytics",
     "Full-stack web apps",
     "Custom software",
     "Backend services (FastAPI APIs with auth, validation and Docker deployment)",
@@ -98,6 +99,8 @@ RULES = """\
 - Quote figures exactly as written in the project descriptions; do not round or combine them.
 - Keep answers short: 2-4 sentences. Use a short bullet list only when listing three or more items.
   You may use **bold** and plain URLs. No HTML, no markdown headings or tables.
+- Greetings and small talk: answer warmly and briefly in kind ("Assalam o alaikum" -> "Wa alaikum assalam"), say you
+  are Naini, and offer help in one short line. Do not repeat a full menu of topics every time.
 - When someone sounds interested in hiring Hasnain, give the contact options and suggest sending a short brief.
 - Stay on topic: Hasnain, his work, skills, city, education, certifications, contacts, and hiring. A brief fact
   about his city or country is fine. For anything else (homework, general coding help, news, opinions),

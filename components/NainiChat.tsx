@@ -77,6 +77,8 @@ export default function NainiChat() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
+        // Visible in the browser console (F12) so a failing API is easy to diagnose.
+        console.error(`[naini] /api/chat responded ${res.status}`, data);
         throw new Error(
           res.status === 429 && typeof data.detail === "string"
             ? data.detail
@@ -85,6 +87,7 @@ export default function NainiChat() {
       }
       reply = String(data.reply);
     } catch (err) {
+      if (err instanceof TypeError) console.error("[naini] could not reach /api/chat (is the API running?)", err);
       reply =
         err instanceof Error && err.message
           ? err.message

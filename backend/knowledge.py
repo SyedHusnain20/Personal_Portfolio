@@ -117,11 +117,56 @@ def _has(q: str, *words: str) -> bool:
     return any(w in q for w in words)
 
 
+# Small talk. A *pure* greeting ("hello", "assalam o alaikum") is answered straight away; the rest
+# (thanks, bye, "how are you") is only tried after the topic keywords, so "hello, what is his
+# email?" still gets the email answer.
+_HELLO = {"hi", "hii", "hiii", "hello", "helo", "hey", "heya", "hola", "yo", "howdy", "greetings", "sup"}
+_GREETING_FILLER = {
+    "there", "naini", "good", "morning", "afternoon", "evening", "dear", "sir", "bro", "and", "o", "wa", "u",
+    "alaikum", "alaykum", "aoa", "salam", "salaam", "assalam", "assalamu", "asalam", "assalamualaikum",
+    "assalamualaykum", "salams",
+}
+_SALAM = ("alaikum", "alaykum", "salam", "salaam", "aoa")
+_INTRO = "I'm **Naini**, Hasnain's AI assistant. Ask me about his projects, skills, experience, certifications or how to hire him."
+
+
+def _greeting(q: str) -> str | None:
+    words = re.findall(r"[a-z']+", q)
+    if not words or len(words) > 6 or not all(w in _HELLO or w in _GREETING_FILLER for w in words):
+        return None
+    if any(w.startswith(_SALAM) or any(k in w for k in _SALAM) for w in words):
+        return f"Wa alaikum assalam! 😊 {_INTRO}"
+    return f"Hello! 👋 {_INTRO}"
+
+
+def _small_talk(q: str) -> str | None:
+    words = re.findall(r"[a-z']+", q)
+    if not words or len(words) > 8:
+        return None
+    text = " ".join(words)
+    if _has(text, "how are you", "how r u", "kaise ho", "kese ho", "kaisay ho", "kya haal", "kia haal"):
+        return f"I'm doing great, thank you for asking! 😊 {_INTRO}"
+    if _has(text, "thank", "thanks", "thx", "shukriya", "shukria", "jazak"):
+        return f"You're very welcome! 😊 To work with Hasnain, email {P.EMAIL} or message him on WhatsApp."
+    if words[0] in ("bye", "goodbye") or _has(text, "see you", "take care", "good night", "khuda hafiz", "allah hafiz"):
+        return f"Goodbye, and thanks for stopping by! 👋 You can always reach Hasnain at {P.EMAIL}."
+    if _has(text, "who are you", "your name", "what are you", "tum kon", "aap kon", "who is naini"):
+        return _INTRO
+    return None
+
+
 def local_reply(db: Session, question: str) -> str:
     q = question.lower()
     projects = _published(db, Project)
 
     if _URDU_SCRIPT.search(question):
+        if _has(question, "سلام", "ہیلو", "ہائے"):
+            return (
+                "وعلیکم السلام! 😊 میں نینی ہوں، حسنین کی اے آئی اسسٹنٹ۔ آپ ان کے پروجیکٹس، مہارتوں، "
+                "تجربے یا رابطے کے بارے میں پوچھ سکتے ہیں۔"
+            )
+        if _has(question, "شکریہ", "مہربانی"):
+            return "آپ کا شکریہ! 😊 مزید کچھ جاننا ہو تو ضرور پوچھیں۔"
         return (
             f"معذرت، ابھی میں مکمل جواب نہیں دے پا رہی۔ حسنین سے براہِ راست رابطہ کریں: "
             f"{P.EMAIL} یا واٹس ایپ {P.PHONE_DISPLAY}۔"
@@ -131,6 +176,10 @@ def local_reply(db: Session, question: str) -> str:
         if p.title.lower() in q or p.slug.replace("-", " ") in q:
             text = f"**{p.title}** ({p.category}): {p.description}"
             return text + (f"\n\nTry it live: {p.live_url}" if p.live_url else "")
+
+    greeting = _greeting(q)
+    if greeting:
+        return greeting
 
     if _has(q, "social", "linkedin", "github", "instagram", "facebook", "twitter", "youtube", "link", "profile"):
         return "Hasnain's official channels: " + "; ".join(f"**{label}** {url}" for label, url in P.SOCIALS) + "."
@@ -162,6 +211,9 @@ def local_reply(db: Session, question: str) -> str:
         return "\n".join(f"- **{e.title}**, {e.organization}" for e in rows) or "See the Experience section."
     if _has(q, "service", "offer", "do you do", "what do"):
         return "Hasnain offers: " + "; ".join(s.split(" (")[0] for s in P.SERVICES) + "."
+    chat = _small_talk(q)
+    if chat:
+        return chat
     return (
         "I can tell you about Hasnain's **projects**, **skills**, **experience**, "
         f"**certifications**, **contact details**, or how to **hire him**. What would you like to know? "

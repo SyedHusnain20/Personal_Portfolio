@@ -239,3 +239,55 @@ def test_fallback_answers_contact_social_city_and_urdu(client):
     assert "linkedin.com" in ask("share his social media")
     assert "Hyderabad" in ask("where is he based?")
     assert "hasnainzainulabdin@gmail.com" in ask("آپ کی خدمات کیا ہیں؟")
+
+
+def test_chat_never_500s_when_internals_break(client, monkeypatch):
+    """A broken fallback or an unreachable database becomes a contact message, not a server error."""
+    from backend.routers import chat as chat_router
+
+    body = {"messages": [{"role": "user", "content": "hello"}]}
+
+    def boom(*args, **kwargs):
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(chat_router, "local_reply", boom)
+    r = client.post("/api/chat", json=body)
+    assert r.status_code == 200 and "hasnainzainulabdin@gmail.com" in r.json()["reply"]
+
+    monkeypatch.setattr(chat_router.ratelimit, "enforce", boom)
+    r = client.post("/api/chat", json=body)
+    assert r.status_code == 200 and "hasnainzainulabdin@gmail.com" in r.json()["reply"]
+
+
+def test_chat_survives_prompt_building_failure_with_a_groq_key(client, monkeypatch):
+    from backend.routers import chat as chat_router
+
+    monkeypatch.setattr(chat_router, "settings", type("S", (), {"groq_api_key": "x", "groq_model": "m"})())
+
+    def boom(db):
+        raise RuntimeError("prompt exploded")
+
+    monkeypatch.setattr(chat_router, "build_system_prompt", boom)
+    r = client.post("/api/chat", json={"messages": [{"role": "user", "content": "where is he based?"}]})
+    assert r.status_code == 200 and "Hyderabad" in r.json()["reply"]
+
+
+def test_fallback_handles_greetings_and_small_talk(client):
+    def ask(q):
+        return client.post("/api/chat", json={"messages": [{"role": "user", "content": q}]}).json()["reply"]
+
+    assert ask("hello").startswith("Hello!") and "Naini" in ask("hello")
+    assert ask("Assalam o alaikum").startswith("Wa alaikum assalam")
+    assert "doing great" in ask("how are you?")
+    assert "welcome" in ask("thanks!").lower()
+    assert "Goodbye" in ask("bye")
+    assert "Naini" in ask("who are you?")
+    assert ask("السلام علیکم").startswith("وعلیکم السلام")
+    # A greeting followed by a real question still gets the real answer.
+    assert "hasnainzainulabdin@gmail.com" in ask("hello, what is his email?")
+    assert "Hello!" not in ask("hello, what is his email?")
+    assert "doing great" in ask("hello, how are you")
+
+
+def test_prompt_tells_the_model_how_to_greet(admin):
+    assert "Wa alaikum assalam" in _prompt()
