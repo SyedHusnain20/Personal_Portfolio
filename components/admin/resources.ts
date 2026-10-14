@@ -134,6 +134,35 @@ export const RESOURCES = {
     ],
   },
 
+  knowledge: {
+    path: "knowledge",
+    singular: "note",
+    plural: "Naini knowledge",
+    intro:
+      "Facts the Naini chatbot can use when visitors ask: extra social links, FAQs, rates policy, languages you speak, anything about you. Naini only repeats what is here, on the site, or in its built-in profile, so add anything it should know.",
+    title: (i) => str(i.title),
+    subtitle: (i) => str(i.content).slice(0, 90),
+    fields: [
+      {
+        key: "title",
+        label: "Topic",
+        type: "text",
+        required: true,
+        maxLength: 120,
+        placeholder: "Instagram, Languages, Working hours…",
+      },
+      {
+        key: "content",
+        label: "What Naini should say",
+        type: "textarea",
+        required: true,
+        maxLength: 2000,
+        help: "Write plain facts, with full links for social profiles. Don't put private details here: visitors can ask Naini about anything in these notes.",
+      },
+      { key: "is_published", label: "Published (Naini can use it)", type: "checkbox" },
+    ],
+  },
+
   experience: {
     path: "experience",
     kind: "experience",

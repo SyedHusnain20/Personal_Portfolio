@@ -139,5 +139,7 @@ export const NAINI_SUGGESTIONS = [
   "What projects has Hasnain built?",
   "What tech stack does he use?",
   "How can I hire him?",
-  "Tell me about ShariahEase",
+  "Where is he based?",
+  "Hasnain ki services kya hain?",
+  "Tell me about R&R Digital Solutions",
 ];

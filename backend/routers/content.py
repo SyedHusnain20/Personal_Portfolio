@@ -2,12 +2,14 @@
 
 from sqlalchemy import update
 
-from ..models import Certificate, Experience, Project
+from ..models import Certificate, Experience, KnowledgeNote, Project
 from ..schemas import (
     CertificateIn,
     CertificateOut,
     ExperienceIn,
     ExperienceOut,
+    KnowledgeIn,
+    KnowledgeOut,
     ProjectIn,
     ProjectOut,
 )
@@ -44,5 +46,13 @@ experience_public, experience_admin = build_resource_routers(
     out_schema=ExperienceOut,
 )
 
+# Naini's notes are admin-only over HTTP: they reach visitors only through chat answers.
+_knowledge_public, knowledge_admin = build_resource_routers(
+    name="knowledge",
+    model=KnowledgeNote,
+    create_schema=KnowledgeIn,
+    out_schema=KnowledgeOut,
+)
+
 public_routers = [projects_public, certificates_public, experience_public]
-admin_routers = [projects_admin, certificates_admin, experience_admin]
+admin_routers = [projects_admin, certificates_admin, experience_admin, knowledge_admin]

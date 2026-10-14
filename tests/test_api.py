@@ -6,7 +6,7 @@ from backend.main import app as _app
 
 # ── auth ────────────────────────────────────────────────────────────────────
 def test_health(client):
-    assert client.get("/api/health").json() == {"status": "ok"}
+    assert client.get("/api/health").json() == {"status": "ok", "auth_problem": None}
 
 
 def test_login_sets_httponly_strict_cookie(client):
@@ -162,3 +162,80 @@ def test_revalidate_endpoint_requires_admin_and_never_raises(client, admin):
     assert TestClientFresh(_app).post("/api/admin/revalidate").status_code == 401
     # No REVALIDATE_SECRET configured in tests, so nothing is pinged and it reports that honestly.
     assert admin.post("/api/admin/revalidate").json() == {"revalidated": False}
+
+
+# ── Naini's knowledge ───────────────────────────────────────────────────────
+def _prompt():
+    from backend.database import SessionLocal
+    from backend.knowledge import build_system_prompt
+
+    with SessionLocal() as db:
+        return build_system_prompt(db)
+
+
+def test_prompt_has_contacts_socials_city_and_site_data(admin):
+    admin.post("/api/admin/projects", json={**PROJECT, "title": "ShariahEase", "description": "+80% faster checks."})
+    admin.post(
+        "/api/admin/experience",
+        json={"kind": "education", "title": "BS in Software Engineering", "organization": "University of Sindh"},
+    )
+    admin.post("/api/admin/certificates", json={"title": "Cisco Python", "issuer": "Cisco", "issued_on": "2025-03-01"})
+    prompt = _prompt()
+    for expected in (
+        "hasnainzainulabdin@gmail.com",
+        "+92 312 6641281",
+        "linkedin.com/in/hasnain-zainulabdin",
+        "github.com/SyedHusnain20",
+        "rrdigitalsolutions.org",
+        "Hyderabad, Sindh, Pakistan",
+        "ShariahEase",
+        "+80% faster checks.",
+        "University of Sindh",
+        "Cisco Python (issued by Cisco, 2025)",
+        "Roman Urdu",
+    ):
+        assert expected in prompt, expected
+
+
+def test_unpublished_rows_stay_out_of_the_prompt(admin):
+    admin.post("/api/admin/projects", json={**PROJECT, "title": "SecretDraft", "is_published": False})
+    admin.post("/api/admin/knowledge", json={"title": "Draft note", "content": "do not share", "is_published": False})
+    prompt = _prompt()
+    assert "SecretDraft" not in prompt and "do not share" not in prompt
+
+
+def test_admin_notes_reach_the_prompt_and_need_login(admin, client):
+    r = admin.post("/api/admin/knowledge", json={"title": "Instagram", "content": "https://instagram.com/example"})
+    assert r.status_code == 201
+    assert "Instagram: https://instagram.com/example" in _prompt()
+    assert client.get("/api/knowledge").status_code == 404  # not exposed publicly
+
+    from fastapi.testclient import TestClient
+
+    from backend.main import app
+
+    anon = TestClient(app)
+    assert anon.get("/api/admin/knowledge").status_code == 401
+    assert anon.post("/api/admin/knowledge", json={"title": "x", "content": "y"}).status_code == 401
+
+
+def test_prompt_survives_a_missing_notes_table(admin):
+    from sqlalchemy import text
+
+    from backend.database import engine
+
+    with engine.begin() as conn:
+        conn.execute(text("DROP TABLE knowledge"))
+    assert "Hasnain" in _prompt()  # code deployed before `alembic upgrade head` still answers
+
+
+def test_fallback_answers_contact_social_city_and_urdu(client):
+    def ask(q):
+        r = client.post("/api/chat", json={"messages": [{"role": "user", "content": q}]})
+        assert r.status_code == 200
+        return r.json()["reply"]
+
+    assert "+92 312 6641281" in ask("what is his phone number?")
+    assert "linkedin.com" in ask("share his social media")
+    assert "Hyderabad" in ask("where is he based?")
+    assert "hasnainzainulabdin@gmail.com" in ask("آپ کی خدمات کیا ہیں؟")

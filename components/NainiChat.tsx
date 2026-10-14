@@ -127,7 +127,7 @@ export default function NainiChat() {
         <div className="naini-messages" ref={listRef} aria-live="polite">
           <div className="naini-msg bot">
             Hey! 👋 I&apos;m <strong>Naini</strong>, Hasnain&apos;s AI assistant. Ask me anything about his work,
-            skills, projects, or how to get in touch!
+            skills, projects, or how to get in touch. I reply in English, اردو or Roman Urdu!
           </div>
 
           {messages.length === 0 && (
@@ -142,11 +142,11 @@ export default function NainiChat() {
 
           {messages.map((m, i) =>
             m.role === "user" ? (
-              <div className="naini-msg user" key={i}>
+              <div className="naini-msg user" key={i} dir="auto">
                 {m.content}
               </div>
             ) : (
-              <div className="naini-msg bot" key={i} dangerouslySetInnerHTML={{ __html: formatMessage(m.content) }} />
+              <div className="naini-msg bot" key={i} dir="auto" dangerouslySetInnerHTML={{ __html: formatMessage(m.content) }} />
             ),
           )}
 
@@ -170,6 +170,7 @@ export default function NainiChat() {
             ref={inputRef}
             type="text"
             className="naini-input"
+            dir="auto"
             placeholder="Ask about Hasnain..."
             autoComplete="off"
             maxLength={MAX_CHARS}

@@ -78,6 +78,18 @@ class Experience(TimestampMixin, Base):
     sort_order: Mapped[int] = mapped_column(Integer, default=0, index=True)
 
 
+class KnowledgeNote(TimestampMixin, Base):
+    """Free-text facts the admin wants Naini (the chatbot) to know: social links, FAQs, policies."""
+
+    __tablename__ = "knowledge"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(120))
+    content: Mapped[str] = mapped_column(Text)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=True)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, index=True)
+
+
 class RateEvent(Base):
     """Rate-limit ledger. Lives in Postgres because serverless instances share no memory."""
 

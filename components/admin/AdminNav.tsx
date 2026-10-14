@@ -10,6 +10,7 @@ const LINKS = [
   ["/admin/certificates", "Certificates"],
   ["/admin/experience", "Experience"],
   ["/admin/education", "Education"],
+  ["/admin/knowledge", "Naini"],
 ] as const;
 
 export default function AdminNav({ email }: { email: string }) {

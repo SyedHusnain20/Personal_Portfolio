@@ -110,6 +110,22 @@ class ExperienceOut(ORMModel):
     updated_at: datetime | None
 
 
+# ── Chatbot knowledge notes ─────────────────────────────────────────────────
+class KnowledgeIn(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    content: str = Field(min_length=1, max_length=2000)
+    is_published: bool = True
+
+
+class KnowledgeOut(ORMModel):
+    id: int
+    title: str
+    content: str
+    is_published: bool
+    sort_order: int
+    updated_at: datetime | None
+
+
 # ── Auth / chat ─────────────────────────────────────────────────────────────
 class LoginIn(BaseModel):
     email: str = Field(min_length=3, max_length=255)

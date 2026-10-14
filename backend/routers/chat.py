@@ -41,8 +41,9 @@ def chat(payload: ChatIn, request: Request, db: Session = Depends(get_db)):
             json={
                 "model": settings.groq_model,
                 "messages": [{"role": "system", "content": build_system_prompt(db)}, *history],
-                "temperature": 0.6,
-                "max_tokens": 400,
+                "temperature": 0.4,
+                # Urdu script costs more tokens per word than English, so leave headroom.
+                "max_tokens": 600,
             },
             timeout=20.0,
         )
