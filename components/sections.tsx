@@ -2,7 +2,8 @@ import {
   ABOUT_CHECKS,
   ABOUT_PARAGRAPHS,
   MANIFESTO,
-  MARQUEE,
+  MARQUEE_TECH,
+  MARQUEE_SERVICES,
   PROCESS,
   SERVICES,
   SITE,
@@ -133,31 +134,31 @@ export function Hero({ liveCount, certCount }: { liveCount: number; certCount: n
   );
 }
 
-/* ───────── Skills marquee ───────── */
-export function Marquee() {
-  const group = (
-    <div className="marquee-group">
-      {MARQUEE.map((item) => (
-        <span key={item}>{item}</span>
-      ))}
-    </div>
-  );
+/* ───────── Skills & Services marquee strips ───────── */
+function MarqueeStrip({ items, reverse, label }: { items: string[]; reverse?: boolean; label: string }) {
+  const repeatCount = items.length < 15 ? 4 : 2;
   return (
-    <div className="marquee">
+    <div className={`marquee-strip${reverse ? " marquee-strip--reverse" : ""}`} aria-label={label}>
       <div className="marquee-mask" aria-hidden="true">
-        <div className="marquee-track">
-          {group}
-          {group}
+        <div className={`marquee-track${reverse ? " marquee-track--reverse" : ""}`}>
+          {Array.from({ length: repeatCount }).map((_, i) => (
+            <div className="marquee-group" key={i}>
+              {items.map((item, j) => (
+                <span key={`${item}-${j}`}>{item}</span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
-      <button className="marquee-toggle" type="button" aria-label="Pause skills ticker" aria-pressed="false">
-        <svg className="icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
-          <path d="M10 5v14M14 5v14" strokeLinecap="round" />
-        </svg>
-        <svg className="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-          <path d="M8 5l11 7-11 7z" strokeLinejoin="round" />
-        </svg>
-      </button>
+    </div>
+  );
+}
+
+export function Marquee() {
+  return (
+    <div className="marquee-strips">
+      <MarqueeStrip items={MARQUEE_TECH} label="Technologies" />
+      <MarqueeStrip items={MARQUEE_SERVICES} reverse label="Services" />
     </div>
   );
 }
@@ -462,9 +463,9 @@ export function Experience({ items }: { items: ExperienceItem[] }) {
 
           <div className="timeline-col reveal">
             <h2>Education</h2>
-            <div className="edu-list">
+            <div className="timeline">
               {education.map((edu) => (
-                <article className="edu-card" key={edu.id}>
+                <article className="timeline-item" key={edu.id}>
                   {edu.period && <p className="time">{edu.period}</p>}
                   <h3>{edu.title}</h3>
                   <span>{edu.organization}</span>

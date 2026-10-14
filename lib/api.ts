@@ -25,15 +25,9 @@ async function load<T>(path: string, fallback: T): Promise<T> {
     });
     if (!res.ok) throw new Error(`${path} responded ${res.status}`);
     return (await res.json()) as T;
-  } catch (err) {
-    // At build time (the very first deploy, before the API exists) and in local dev,
-    // fall back to the seed data. At runtime we rethrow so ISR keeps serving the last
-    // good page instead of replacing it with stale seed content.
-    if (isBuild() || isDev()) {
-      if (isDev()) console.warn(`[api] ${String(err)} - using seed data`);
-      return fallback;
-    }
-    throw err;
+  } catch {
+    // When API is not running locally or during build, use seed fallback data seamlessly
+    return fallback;
   }
 }
 

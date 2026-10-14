@@ -651,12 +651,19 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
 
-    /* ── Marquee ── */
-    .marquee {
+    /* ── Marquee Strips ── */
+    .marquee-strips {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .marquee-strip {
       position: relative;
+      padding: 13px 0;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      padding: 15px 0;
     }
 
     .marquee-mask {
@@ -665,53 +672,20 @@
       mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
     }
 
-    .marquee-toggle {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: grid;
-      place-items: center;
-      width: 30px;
-      height: 30px;
-      border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      background: var(--surface);
-      color: var(--ink-2);
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .marquee-toggle:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .marquee-toggle svg {
-      width: 12px;
-      height: 12px;
-    }
-
-    .marquee-toggle .icon-play {
-      display: none;
-    }
-
-    .marquee.paused .icon-play {
-      display: block;
-    }
-
-    .marquee.paused .icon-pause {
-      display: none;
-    }
-
-    .marquee.paused .marquee-track {
-      animation-play-state: paused;
-    }
-
     .marquee-track {
       display: flex;
       width: max-content;
-      animation: marquee 40s linear infinite;
+      will-change: transform;
+      animation: marquee-left 45s linear infinite;
+    }
+
+    .marquee-track--reverse {
+      animation: marquee-right 40s linear infinite;
+    }
+
+    .marquee-strip:hover .marquee-track,
+    .marquee-strip:hover .marquee-track--reverse {
+      animation-play-state: paused !important;
     }
 
     .marquee-group {
@@ -726,6 +700,11 @@
       text-transform: uppercase;
       color: var(--muted);
       white-space: nowrap;
+      transition: color 200ms ease;
+    }
+
+    .marquee-strip:hover .marquee-group {
+      color: var(--ink-2);
     }
 
     .marquee-group span::before {
@@ -734,12 +713,22 @@
       color: var(--accent);
     }
 
-    @keyframes marquee {
-      to { transform: translateX(-50%); }
+    @keyframes marquee-left {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-50%, 0, 0);
+      }
     }
 
-    .marquee-track.gsap-run {
-      animation: none;
+    @keyframes marquee-right {
+      0% {
+        transform: translate3d(-50%, 0, 0);
+      }
+      100% {
+        transform: translate3d(0, 0, 0);
+      }
     }
 
     /* ── Sections ── */
@@ -1205,15 +1194,13 @@
       color: var(--muted);
     }
 
-    .timeline-item h3,
-    .edu-card h3 {
+    .timeline-item h3 {
       margin-top: 6px;
       font-size: 1.02rem;
       font-weight: 600;
     }
 
-    .timeline-item > span,
-    .edu-card span {
+    .timeline-item > span {
       display: block;
       margin-top: 2px;
       color: var(--accent);
@@ -1221,30 +1208,10 @@
       font-weight: 500;
     }
 
-    .timeline-item p,
-    .edu-card p {
+    .timeline-item p {
       margin-top: 8px;
       color: var(--ink-2);
       font-size: 0.88rem;
-    }
-
-    .edu-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .edu-card {
-      padding: 22px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: var(--surface);
-      transition: border-color 250ms ease, transform 300ms cubic-bezier(.4,0,.2,1), box-shadow 300ms ease;
-    }
-
-    .edu-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
     }
 
     /* ── Certifications ── */
@@ -1978,14 +1945,11 @@
         border-radius: 12px;
       }
 
-      .theme-toggle,
-      .hamburger,
-      .marquee-toggle {
+      .hamburger {
         border-radius: 30%;
       }
 
-      .process-step,
-      .edu-card {
+      .process-step {
         border-radius: 19px;
       }
 
@@ -2014,11 +1978,20 @@
       *::after {
         scroll-behavior: auto !important;
         transition: none !important;
-        animation: none !important;
       }
 
+      /* Keep marquee strips gently moving */
       .marquee-track {
-        animation: none !important;
+        animation: marquee-left 45s linear infinite !important;
+      }
+
+      .marquee-track--reverse {
+        animation: marquee-right 40s linear infinite !important;
+      }
+
+      .marquee-strip:hover .marquee-track,
+      .marquee-strip:hover .marquee-track--reverse {
+        animation-play-state: paused !important;
       }
     }
 

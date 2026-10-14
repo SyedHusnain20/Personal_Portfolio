@@ -233,24 +233,8 @@ export default function Effects() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let cancelled = false;
     let ctx: { revert: () => void } | undefined;
-    let marqueeTween: { paused: (value: boolean) => unknown } | null = null;
 
     const stopShader = initShader(signal, reduced);
-
-    /* Marquee play / pause */
-    const marquee = document.querySelector<HTMLElement>(".marquee");
-    const toggle = document.querySelector<HTMLButtonElement>(".marquee-toggle");
-    toggle?.addEventListener(
-      "click",
-      () => {
-        if (!marquee) return;
-        const paused = marquee.classList.toggle("paused");
-        toggle.setAttribute("aria-pressed", String(paused));
-        toggle.setAttribute("aria-label", paused ? "Play skills ticker" : "Pause skills ticker");
-        marqueeTween?.paused(paused);
-      },
-      { signal },
-    );
 
     if (!reduced) {
       (async () => {
@@ -271,7 +255,7 @@ export default function Effects() {
             .from(".hero-email", { opacity: 0, duration: 0.5 }, "-=0.35")
             .from(".hero-proof > *", { y: 14, opacity: 0, stagger: 0.08, duration: 0.5 }, "-=0.3")
             .from(".portrait-card", { y: 28, opacity: 0, scale: 0.97, duration: 1 }, 0.15)
-            .from(".marquee", { opacity: 0, duration: 0.8 }, "-=0.5");
+            .from(".marquee-strips", { opacity: 0, duration: 0.8 }, "-=0.5");
 
           /* Scroll reveals */
           gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) => {
@@ -352,21 +336,7 @@ export default function Effects() {
             scrollTrigger: { start: 0, end: "max", scrub: 0.3 },
           });
 
-          /* Marquee: GSAP drives it so it can speed up with scroll velocity */
-          const track = document.querySelector<HTMLElement>(".marquee-track");
-          if (track) {
-            track.classList.add("gsap-run");
-            const tween = gsap.to(track, { xPercent: -50, ease: "none", duration: 42, repeat: -1 });
-            marqueeTween = tween;
-            if (marquee?.classList.contains("paused")) tween.paused(true);
-            ScrollTrigger.create({
-              onUpdate: (self) => {
-                const boost = gsap.utils.clamp(1, 4, 1 + Math.abs(self.getVelocity()) / 900);
-                tween.timeScale(boost);
-                gsap.to(tween, { timeScale: 1, duration: 0.9, ease: "power2.out", overwrite: true });
-              },
-            });
-          }
+
 
           /* Certificate seal turns as you scroll past */
           gsap.to(".cert-seal svg", {
