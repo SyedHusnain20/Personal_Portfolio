@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NAINI_SUGGESTIONS, SITE } from "@/lib/content";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; sources?: string[] };
 
 // Keep in step with ChatMessage / ChatIn in backend/schemas.py.
 const MAX_CHARS = 600;
@@ -66,6 +66,7 @@ export default function NainiChat() {
     setBusy(true);
 
     let reply: string;
+    let sources: string[] = [];
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -86,6 +87,7 @@ export default function NainiChat() {
         );
       }
       reply = String(data.reply);
+      if (Array.isArray(data.sources)) sources = data.sources.filter((x: unknown) => typeof x === "string").slice(0, 3);
     } catch (err) {
       if (err instanceof TypeError) console.error("[naini] could not reach /api/chat (is the API running?)", err);
       reply =
@@ -93,7 +95,7 @@ export default function NainiChat() {
           ? err.message
           : `Sorry, something went wrong. Please try again or email Hasnain directly at ${SITE.email}`;
     }
-    setMessages([...next, { role: "assistant", content: reply }]);
+    setMessages([...next, { role: "assistant", content: reply, sources }]);
     setBusy(false);
     inputRef.current?.focus();
   }
@@ -149,7 +151,16 @@ export default function NainiChat() {
                 {m.content}
               </div>
             ) : (
-              <div className="naini-msg bot" key={i} dir="auto" dangerouslySetInnerHTML={{ __html: formatMessage(m.content) }} />
+              <div key={i} style={{ display: "contents" }}>
+                <div className="naini-msg bot" dir="auto" dangerouslySetInnerHTML={{ __html: formatMessage(m.content) }} />
+                {m.sources && m.sources.length > 0 && (
+                  <div
+                    style={{ alignSelf: "flex-start", maxWidth: "85%", marginTop: -4, padding: "0 4px", fontSize: "0.7rem", lineHeight: 1.4, color: "var(--muted)" }}
+                  >
+                    Based on: {m.sources.join(" · ")}
+                  </div>
+                )}
+              </div>
             ),
           )}
 

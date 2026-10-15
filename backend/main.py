@@ -33,7 +33,12 @@ async def same_origin_for_writes(request: Request, call_next):
 @app.get("/api/health")
 def health():
     # auth_problem is "missing" or "too_short" when JWT_SECRET is unusable (never the secret itself).
-    return {"status": "ok", "auth_problem": settings.jwt_problem}
+    # chat_model is the Groq model Naini uses, or null when there is no GROQ_API_KEY (keyword-retrieval fallback).
+    return {
+        "status": "ok",
+        "auth_problem": settings.jwt_problem,
+        "chat_model": settings.groq_model if settings.groq_api_key else None,
+    }
 
 
 @app.post("/api/admin/revalidate", tags=["admin"], dependencies=[Depends(get_current_admin)])

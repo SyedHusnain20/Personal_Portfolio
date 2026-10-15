@@ -148,3 +148,5 @@ class ChatIn(BaseModel):
 
 class ChatOut(BaseModel):
     reply: str
+    # Labels of the facts the answer was based on, e.g. "Education · BS in Software Engineering".
+    sources: list[str] = Field(default_factory=list)

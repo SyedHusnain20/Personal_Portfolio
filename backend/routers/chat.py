@@ -10,7 +10,7 @@ from .. import ratelimit
 from ..config import settings
 from ..database import get_db
 from ..deps import client_ip
-from ..knowledge import EMAIL, WHATSAPP, build_system_prompt, local_reply
+from ..knowledge import EMAIL, WHATSAPP, Knowledge
 from ..schemas import ChatIn, ChatOut
 
 router = APIRouter(tags=["chat"])
@@ -29,12 +29,13 @@ def _static_reply() -> str:
     )
 
 
-def _safe_local_reply(db: Session, question: str) -> str:
+def _local(know: Knowledge, question: str, prior: str | None) -> ChatOut:
     try:
-        return local_reply(db, question)
+        reply, sources = know.local_answer(question, prior)
+        return ChatOut(reply=reply, sources=sources)
     except Exception:  # noqa: BLE001 - a broken fallback must never become a 500 for the visitor
-        log.exception("chat: keyword fallback failed")
-        return _static_reply()
+        log.exception("chat: retrieval fallback failed")
+        return ChatOut(reply=_static_reply())
 
 
 @router.post("/chat", response_model=ChatOut)
@@ -51,28 +52,38 @@ def chat(payload: ChatIn, request: Request, db: Session = Depends(get_db)):
         return ChatOut(reply=_static_reply())
 
     history = [m.model_dump() for m in payload.messages[-8:]]
-    last_user = next((m["content"] for m in reversed(history) if m["role"] == "user"), "")
-
-    if not settings.groq_api_key:
-        return ChatOut(reply=_safe_local_reply(db, last_user))
+    user_turns = [m["content"] for m in history if m["role"] == "user"]
+    last_user = user_turns[-1] if user_turns else ""
+    prior_user = user_turns[-2] if len(user_turns) > 1 else None
 
     try:
+        know = Knowledge.load(db)
+    except Exception:  # noqa: BLE001
+        log.exception("chat: could not load the knowledge base")
+        return ChatOut(reply=_static_reply())
+
+    if not settings.groq_api_key:
+        return _local(know, last_user, prior_user)
+
+    try:
+        focus = know.retrieve(last_user, prior_user)
         response = httpx.post(
             GROQ_URL,
             headers={"Authorization": f"Bearer {settings.groq_api_key}"},
             json={
                 "model": settings.groq_model,
-                "messages": [{"role": "system", "content": build_system_prompt(db)}, *history],
-                "temperature": 0.4,
+                "messages": [{"role": "system", "content": know.system_prompt(focus)}, *history],
+                "temperature": 0.3,
                 # Urdu script costs more tokens per word than English, so leave headroom.
                 "max_tokens": 600,
             },
             timeout=20.0,
         )
         response.raise_for_status()
-        return ChatOut(reply=response.json()["choices"][0]["message"]["content"].strip())
+        reply = response.json()["choices"][0]["message"]["content"].strip()
+        return ChatOut(reply=reply, sources=focus.sources)
     except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
         log.warning("groq call failed: %s", exc)
     except Exception:  # noqa: BLE001 - prompt building or anything unexpected: log it, answer from the fallback
         log.exception("chat: unexpected failure while asking the model")
-    return ChatOut(reply=_safe_local_reply(db, last_user))
+    return _local(know, last_user, prior_user)

@@ -6,7 +6,7 @@ from backend.main import app as _app
 
 # ── auth ────────────────────────────────────────────────────────────────────
 def test_health(client):
-    assert client.get("/api/health").json() == {"status": "ok", "auth_problem": None}
+    assert client.get("/api/health").json() == {"status": "ok", "auth_problem": None, "chat_model": None}
 
 
 def test_login_sets_httponly_strict_cookie(client):
@@ -238,11 +238,13 @@ def test_fallback_answers_contact_social_city_and_urdu(client):
     assert "+92 312 6641281" in ask("what is his phone number?")
     assert "linkedin.com" in ask("share his social media")
     assert "Hyderabad" in ask("where is he based?")
-    assert "hasnainzainulabdin@gmail.com" in ask("آپ کی خدمات کیا ہیں؟")
+    assert "Custom chatbots" in ask("آپ کی خدمات کیا ہیں؟")  # English answer with an Urdu apology line
+    assert "hasnainzainulabdin@gmail.com" in ask("موسم کیسا ہے؟")  # nothing relevant: contact details instead
 
 
 def test_chat_never_500s_when_internals_break(client, monkeypatch):
     """A broken fallback or an unreachable database becomes a contact message, not a server error."""
+    from backend.knowledge import Knowledge
     from backend.routers import chat as chat_router
 
     body = {"messages": [{"role": "user", "content": "hello"}]}
@@ -250,7 +252,7 @@ def test_chat_never_500s_when_internals_break(client, monkeypatch):
     def boom(*args, **kwargs):
         raise RuntimeError("boom")
 
-    monkeypatch.setattr(chat_router, "local_reply", boom)
+    monkeypatch.setattr(Knowledge, "local_answer", boom)
     r = client.post("/api/chat", json=body)
     assert r.status_code == 200 and "hasnainzainulabdin@gmail.com" in r.json()["reply"]
 
@@ -260,14 +262,15 @@ def test_chat_never_500s_when_internals_break(client, monkeypatch):
 
 
 def test_chat_survives_prompt_building_failure_with_a_groq_key(client, monkeypatch):
+    from backend.knowledge import Knowledge
     from backend.routers import chat as chat_router
 
     monkeypatch.setattr(chat_router, "settings", type("S", (), {"groq_api_key": "x", "groq_model": "m"})())
 
-    def boom(db):
+    def boom(self, focus=None):
         raise RuntimeError("prompt exploded")
 
-    monkeypatch.setattr(chat_router, "build_system_prompt", boom)
+    monkeypatch.setattr(Knowledge, "system_prompt", boom)
     r = client.post("/api/chat", json={"messages": [{"role": "user", "content": "where is he based?"}]})
     assert r.status_code == 200 and "Hyderabad" in r.json()["reply"]
 
@@ -291,3 +294,34 @@ def test_fallback_handles_greetings_and_small_talk(client):
 
 def test_prompt_tells_the_model_how_to_greet(admin):
     assert "Wa alaikum assalam" in _prompt()
+
+
+def test_chat_returns_sources_with_the_answer(admin, client):
+    admin.post("/api/admin/experience", json={"kind": "education", "title": "BS in Software Engineering", "organization": "University of Sindh"})
+    admin.post("/api/admin/experience", json={"kind": "experience", "title": "Python Developer", "organization": "Local Freelance"})
+    r = client.post("/api/chat", json={"messages": [{"role": "user", "content": "I'm asking about education, not experience"}]}).json()
+    assert "University of Sindh" in r["reply"] and "Python Developer" not in r["reply"]
+    assert r["sources"] == ["Education · BS in Software Engineering"]
+    assert client.post("/api/chat", json={"messages": [{"role": "user", "content": "hello"}]}).json()["sources"] == []
+
+
+def test_groq_answer_carries_the_focus_as_sources(admin, client, monkeypatch):
+    from backend.routers import chat as chat_router
+
+    admin.post("/api/admin/experience", json={"kind": "education", "title": "BS in Software Engineering", "organization": "University of Sindh"})
+    sent = {}
+
+    class Resp:
+        def raise_for_status(self): ...
+        def json(self): return {"choices": [{"message": {"content": "He studied at the University of Sindh."}}]}
+
+    def fake_post(url, **kw):
+        sent.update(kw["json"])
+        return Resp()
+
+    monkeypatch.setattr(chat_router, "settings", type("S", (), {"groq_api_key": "x", "groq_model": "m"})())
+    monkeypatch.setattr(chat_router.httpx, "post", fake_post)
+    r = client.post("/api/chat", json={"messages": [{"role": "user", "content": "where did he study?"}]}).json()
+    assert r["reply"].startswith("He studied") and r["sources"] == ["Education · BS in Software Engineering"]
+    system = sent["messages"][0]["content"]
+    assert system.index("MOST RELEVANT FACTS") < system.index("=== WHO HE IS ===")
