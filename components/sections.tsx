@@ -282,7 +282,7 @@ function FeaturedVisual({ project }: { project: Project }) {
   }
   const steps = project.flow_steps ?? [];
   return (
-    <div className="featured-visual" aria-hidden="true">
+    <div className="featured-visual featured-visual--diagram" aria-hidden="true">
       {steps.length > 0 ? (
         <>
           <div className="flow">

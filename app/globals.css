@@ -1856,29 +1856,10 @@
         font-size: 0.62rem;
       }
 
-      /* Pipeline diagram wraps instead of overflowing */
-      .featured-visual {
-        min-height: 0;
-        padding: 30px 20px 54px;
-      }
-
-      .flow {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        max-width: 300px;
-      }
-
-      .flow-arrow {
+      /* Mobile: the featured card shows only its text. The pipeline diagram
+         (flow nodes + caption) is hidden here and stays on tablet/desktop. */
+      .featured-visual--diagram {
         display: none;
-      }
-
-      .flow-node {
-        min-height: 66px;
-      }
-
-      .flow-caption {
-        bottom: 18px;
       }
 
       .services-grid {
