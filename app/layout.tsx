@@ -8,6 +8,12 @@ const FONTS =
 // Runs before first paint so there is no light/dark flash.
 const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(!t)t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){}})();`;
 
+// Google tag (GTM-P8DX43WQ). Rendered in the root layout's <head>, so it is on every page.
+const GOOGLE_TAG_ID = "GTM-P8DX43WQ";
+const GOOGLE_TAG_SCRIPT = `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: SITE.title,
@@ -80,6 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script async src={`https://www.googletagmanager.com/gtm.js?id=${GOOGLE_TAG_ID}`} />
+        <script dangerouslySetInnerHTML={{ __html: GOOGLE_TAG_SCRIPT }} />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
